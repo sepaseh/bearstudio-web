@@ -56,6 +56,30 @@ jobs:
             fi
             echo '::warning::This pull request uses the file reserve for review fixes. Keep unrelated changes in a separate pull request.'
           fi
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122
+        with:
+          php-version: "8.4"
+          extensions: dom, fileinfo, gd, intl, mbstring, pdo_mysql, zip
+          tools: composer:v2
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: composer quality
+      - run: composer audit
+      - uses: actions/setup-node@66f83c8206e0997178c8fd7bf1da9efccf5dd388
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm audit
+      - run: npm run typecheck
+      - run: node --test scripts/check-deployed-release.test.mjs
   tests:
     runs-on: ubuntu-latest
     services:
@@ -70,24 +94,27 @@ jobs:
           --health-interval=5s --health-timeout=5s --health-retries=20
     timeout-minutes: 15
     steps:
-      - &a1
-        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
         with:
           persist-credentials: false
       - uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122
         with:
           php-version: "8.4"
           extensions: dom, fileinfo, gd, intl, mbstring, pdo_mysql, zip
-          coverage: none
+          coverage: xdebug
       - uses: actions/setup-node@66f83c8206e0997178c8fd7bf1da9efccf5dd388
         with:
           node-version: "24"
           cache: npm
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: composer test
-    needs: scope
-    if: needs.scope.outputs.runtime == 'true'
+      - run: composer test:coverage
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: php-tests-${{ github.sha }}
+          path: coverage/
+          if-no-files-found: error
   browser:
     runs-on: ubuntu-latest
     services:
@@ -116,7 +143,6 @@ jobs:
           cache: npm
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: npm run typecheck
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
@@ -126,60 +152,45 @@ jobs:
           path: |
             playwright-report/
             test-results/
-    needs: scope
-    if: needs.scope.outputs.runtime == 'true'
+  release:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "1"
+          MARIADB_ROOT_HOST: "%"
+        ports:
+          - 3306:3306
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122
+        with:
+          php-version: "8.4"
+          extensions: dom, fileinfo, gd, intl, mbstring, pdo_mysql, zip
+          coverage: none
+      - run: php scripts/package-release.php
   check:
     if: always()
     needs:
-      - scope
       - pr-files
+      - quality
       - tests
       - browser
+      - release
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      - name: Require all applicable phase checks
+      - name: Require every validation job
         env:
           RESULTS: ${{ toJSON(needs) }}
           EVENT: ${{ github.event_name }}
-          RUNTIME: ${{ needs.scope.outputs.runtime }}
         run: >
-          echo "$RESULTS" | jq -e --arg event "$EVENT" --arg runtime "$RUNTIME"
-          '
-            .scope.result == "success" and ($runtime == "true" or $runtime == "false")
-            and (."pr-files".result == (if $event == "pull_request" then "success" else "skipped" end))
-            and ([.tests.result, .browser.result]
-              | all(. == (if $runtime == "true" then "success" else "skipped" end)))'
-  scope:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      runtime: ${{ steps.source.outputs.runtime }}
-    steps:
-      - *a1
-      - id: source
-        name: Detect the published runtime and its test entry points
-        shell: bash
-        run: >
-          paths=(artisan composer.json composer.lock package.json
-          package-lock.json phpunit.xml tests/bootstrap.php playwright.config.ts
-          scripts/browser-server.mjs)
-
-          present=0
-
-          for file in "${paths[@]}"; do
-            if [[ -e "$file" || -L "$file" ]]; then
-              [[ -f "$file" && -s "$file" && ! -L "$file" ]]
-              present=$((present + 1))
-            fi
-          done
-
-          if (( present == 0 )); then
-            echo 'runtime=false' >> "$GITHUB_OUTPUT"
-            echo 'Verified the presentation and CI foundation phase.'
-          elif (( present == ${#paths[@]} )); then
-            echo 'runtime=true' >> "$GITHUB_OUTPUT"
-          else
-            echo '::error::Publish the runtime and its test entry points together.'
-            exit 1
-          fi
+          echo "$RESULTS" | jq -e --arg event "$EVENT" '
+            all(to_entries[]; if .key == "pr-files" and $event != "pull_request"
+              then .value.result == "skipped" else .value.result == "success" end)'

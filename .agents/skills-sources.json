@@ -1,0 +1,280 @@
+[
+  {
+    "project": "bearstudio-web",
+    "name": "laravel-best-practices",
+    "repository": "https://github.com/laravel/boost",
+    "commit": "c1c27ed55bf32e0c82f71663516f89e23eefde3e",
+    "path": ".ai/laravel/skill/laravel-best-practices",
+    "skillSha256": "96CEF716F69A2CF587F27EB4F03A4ADFBAFBE58D0F1277CCCAFFDB67BA35C072",
+    "localGeneratedFiles": [
+      {
+        "file": "rules/config.md",
+        "source": "rules/config.blade.php",
+        "sha256": "F6BD40C1EDE96B3DBAB0D9CB8FDC64BEC36CDCD36CC88F4441957B18225E9187"
+      },
+      {
+        "file": "rules/events-notifications.md",
+        "source": "rules/events-notifications.blade.php",
+        "sha256": "887649C1F23692618A5AABA9F7B0A4B0D3D88ADE498AF9F2A46F911DC75845BB"
+      },
+      {
+        "file": "rules/mail.md",
+        "source": "rules/mail.blade.php",
+        "sha256": "7C0BE3203CF47F67943CFE474D8FF91282F7DB691A6611DA0EFB28CAF099A3E7"
+      },
+      {
+        "file": "rules/migrations.md",
+        "source": "rules/migrations.blade.php",
+        "sha256": "9D4CF176531794CDBF1FE579005D98E09073195945B6F62C68D4C69976158B71"
+      },
+      {
+        "file": "rules/scheduling.md",
+        "source": "rules/scheduling.blade.php",
+        "sha256": "A92391A0F2E3AEA3BCF956FB02A127691C889D94C3D30A22181BFB85CD7621DA"
+      },
+      {
+        "file": "rules/security.md",
+        "source": "rules/security.blade.php",
+        "sha256": "7A79CEF02106DA45DC2D359D693E6772F92C5342B257DFB96E6F482AEF3A361B"
+      }
+    ]
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "testing-best-practices",
+    "repository": "https://github.com/laravel/boost",
+    "commit": "c1c27ed55bf32e0c82f71663516f89e23eefde3e",
+    "path": ".ai/laravel/skill/testing-best-practices",
+    "skillSource": "SKILL.blade.php",
+    "skillSha256": "BD24AF5BBD6EDBAF1F6F11ED8A3596105025775D393FCB4064D268A4EB2B2C31",
+    "upstreamFiles": [
+      {
+        "file": "SKILL.blade.php",
+        "sha256": "BFB02A1148DE0713A678CC5BA38CB35F47056865F8FC65967214AAB2CEF05321"
+      },
+      {
+        "file": "UPSTREAM-LICENSE.md",
+        "sha256": "7B4F9149597FBAE2CE689BC9317D1869E17F1B3FA5F01C289998C108F8C37CF7"
+      },
+      {
+        "file": "rules/assertions.blade.php",
+        "sha256": "7CD803F1F9E90A5F19773EBDB87BF5BDC0BB518F4A7AE513DE075FD71DDC9C8C"
+      },
+      {
+        "file": "rules/endpoint-tests.blade.php",
+        "sha256": "1FA2C5C46BB32384935EB4863E09304E713CA7D044E2D6A8A4459F3971E88BFF"
+      },
+      {
+        "file": "rules/finding-features.blade.php",
+        "sha256": "9BE063927C1E7B4152856DE7F2FD9074EBF6C244FE69222784D8949FB5D811B0"
+      },
+      {
+        "file": "rules/isolation.blade.php",
+        "sha256": "2915F50B784AC83B16A1E31B432EAF5CC0C4D006346F836FC504FED9133AEB4C"
+      },
+      {
+        "file": "rules/naming.blade.php",
+        "sha256": "4BC84D375FA66B33AAE692D83F8CBEAB98BE148E158B43565ECE22A9C9290E38"
+      },
+      {
+        "file": "rules/performance.blade.php",
+        "sha256": "C61D9CCE68FF88496877F2B24A1D36A633CDAAB764EF298DBFD11B1A1F73A0CE"
+      },
+      {
+        "file": "rules/review.blade.php",
+        "sha256": "1890616204251959E6F7AE86D4BA89B85CBD2BDE430E7D775A74A3954F22A913"
+      },
+      {
+        "file": "rules/security.blade.php",
+        "sha256": "388A6695A54F138440C32974BAE80627E505DB9536FB293C37AAB9F1C08F1CA7"
+      },
+      {
+        "file": "rules/test-data.blade.php",
+        "sha256": "1DB48C3BD2C7EFD4398FE22B78EE013783B26672D9B3245FE7019319B0A58152"
+      }
+    ],
+    "localGeneratedFiles": [
+      {
+        "file": "rules/assertions.md",
+        "source": "rules/assertions.blade.php",
+        "sha256": "46E9BF38555F2FE70EB3C5BEDF2514B1E671D10B4A47E3441D5059506ADF51AF"
+      },
+      {
+        "file": "rules/endpoint-tests.md",
+        "source": "rules/endpoint-tests.blade.php",
+        "sha256": "3365C023EC4B1A5FC1F59CA1CF61C7E45F4468F6703C791D713389172F363500"
+      },
+      {
+        "file": "rules/finding-features.md",
+        "source": "rules/finding-features.blade.php",
+        "sha256": "6381D234E70008F2D24E57FDCD275FEED857848286A9BE52CC373C60019D226A"
+      },
+      {
+        "file": "rules/isolation.md",
+        "source": "rules/isolation.blade.php",
+        "sha256": "12E4C860B434A9A989BAC8210EFBBF4E76973854FB005B578D2AB0F61B84A896"
+      },
+      {
+        "file": "rules/naming.md",
+        "source": "rules/naming.blade.php",
+        "sha256": "98F1814CA3CBFBF04E609D3C786945182944991A4666FE1776986D3459411815"
+      },
+      {
+        "file": "rules/performance.md",
+        "source": "rules/performance.blade.php",
+        "sha256": "105078C8C155ED919435F8E2E1C4D968B3E3E4340BB82BB97703EC40E79EF8C0"
+      },
+      {
+        "file": "rules/review.md",
+        "source": "rules/review.blade.php",
+        "sha256": "8A60BFBEB890F054BADE54BEE8B4E179BC8E92806E31124176036EF9199DA8A9"
+      },
+      {
+        "file": "rules/security.md",
+        "source": "rules/security.blade.php",
+        "sha256": "9F66A91341B1D985D1992F55F6CEFA953D21C918535E6C7FDEEBC43784FEA50B"
+      },
+      {
+        "file": "rules/test-data.md",
+        "source": "rules/test-data.blade.php",
+        "sha256": "FB6F093DBA7D4EBD09285815276D70D170942B26909C4FAE2BF762A7AE49180A"
+      }
+    ]
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "web-design-guidelines",
+    "repository": "https://github.com/vercel-labs/agent-skills",
+    "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
+    "path": "skills/web-design-guidelines",
+    "skillSha256": "360B1240ACFFFA95E76373DB9F837A1F28ABA8F6D4C361E3D588BE0EAEFAA070"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "playwright-cli",
+    "repository": "https://github.com/microsoft/playwright-cli",
+    "commit": "dc5f4d5616ab5a28ded12fd7101a4d49bd59a820",
+    "path": "skills/playwright-cli",
+    "skillSha256": "1C4C34000F6102EE71FE91BF25351A221F7DA37F48F2D556E1756F66E17D356F"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "core-web-vitals",
+    "repository": "https://github.com/addyosmani/web-quality-skills",
+    "commit": "afa8da942115f2961fdbfa80807ea0b232ff6c00",
+    "path": "skills/core-web-vitals",
+    "skillSha256": "731AA78C0347E8B3E191B75962175BEE058CE73817278E610AC0FE546E685914"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "performance",
+    "repository": "https://github.com/addyosmani/web-quality-skills",
+    "commit": "afa8da942115f2961fdbfa80807ea0b232ff6c00",
+    "path": "skills/performance",
+    "skillSha256": "B0C220185D88C61F7770EB127D8FACF86C86D2DD1FD82B86E15A4965A0137265"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "seo",
+    "repository": "https://github.com/addyosmani/web-quality-skills",
+    "commit": "afa8da942115f2961fdbfa80807ea0b232ff6c00",
+    "path": "skills/seo",
+    "skillSha256": "57CD16566C2C706186B643644DEC2884DA89C42F296843364C65A40A4D566AE6"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "accessibility",
+    "repository": "https://github.com/addyosmani/web-quality-skills",
+    "commit": "afa8da942115f2961fdbfa80807ea0b232ff6c00",
+    "path": "skills/accessibility",
+    "skillSha256": "267FB2A0707D6142F2871F22688203A42BA21291A2AA200FB740936E41362B5D"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "modern-web-guidance",
+    "repository": "https://github.com/GoogleChrome/modern-web-guidance",
+    "commit": "2b4aa13a72dd47cd135b06ce5abfccd92e19b24f",
+    "path": "skills/modern-web-guidance",
+    "skillSha256": "4BBD5A56220B3560CD76A665D0AA21C8DB5ACB1B51088E47463EB068D9F6317D"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "yeet",
+    "repository": "https://github.com/openai/skills",
+    "commit": "49f948faa9258a0c61caceaf225e179651397431",
+    "path": "skills/.curated/yeet",
+    "skillSha256": "4829D4909081E1ABF91507FB581E6F566CE7064001892414F32191895B08A595"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "laravel-tdd",
+    "repository": "https://github.com/affaan-m/ECC",
+    "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+    "path": "skills/laravel-tdd",
+    "skillSha256": "505FA6C5CAAD022A5DB0C359AEBDCDCCE1AD16E5863DC13EF862AEC48CFA1628"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "gh-fix-ci",
+    "repository": "https://github.com/openai/skills",
+    "commit": "49f948faa9258a0c61caceaf225e179651397431",
+    "path": "skills/.curated/gh-fix-ci",
+    "skillSha256": "7B326B4A2F0F5F85122144628EC02077E48841E0E0E82EFCE88B3415BCFB7C26"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "frontend-design",
+    "repository": "https://github.com/anthropics/skills",
+    "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+    "path": "skills/frontend-design",
+    "skillSha256": "D91970639E9F5C37682AC7AB60094D35F1C7C1F38D731BD56396563AEE10C1D3"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "tailwindcss-development",
+    "repository": "https://github.com/laravel/boost",
+    "commit": "c1c27ed55bf32e0c82f71663516f89e23eefde3e",
+    "path": ".ai/tailwindcss/4/skill/tailwindcss-development",
+    "skillSha256": "D5640A1F124DD87EBFF0711843F7B273A06CFB878B1B3737FD70E04671D088CB"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "mariadb-features",
+    "repository": "https://github.com/MariaDB/skills",
+    "commit": "5895ef8da1908d5b438d8ccb48653bcecedc090a",
+    "path": "mariadb-features",
+    "skillSha256": "7E39C1D3AE42974A13A76F8F46D6AB2C26129830C761E9621BF43DAE692F19F4"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "mariadb-query-optimization",
+    "repository": "https://github.com/MariaDB/skills",
+    "commit": "5895ef8da1908d5b438d8ccb48653bcecedc090a",
+    "path": "mariadb-query-optimization",
+    "skillSha256": "B4F5239088DF9835C0F8C42852EC24F85A36101D77C8C2F95BE1C978F5398B48"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "motion",
+    "repository": "https://github.com/motiondivision/ai-kit",
+    "commit": "1e424943582cbbdb6e3f410687e39f96451447bb",
+    "path": "plugins/motion/skills/motion",
+    "skillSha256": "69F9FE4DE5BD0618DD3578925E0F21DF5EBB5161E2665ED2AA1ED55EDEF3BE0F"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "github-actions-hardening",
+    "repository": "https://github.com/github/awesome-copilot",
+    "commit": "93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf",
+    "path": "skills/github-actions-hardening",
+    "skillSha256": "31A8E7483D978E6267941EDEFEBBE42AAA946BB3D43C9095AA3DB343D4A8FF06"
+  },
+  {
+    "project": "bearstudio-web",
+    "name": "dependabot",
+    "repository": "https://github.com/github/awesome-copilot",
+    "commit": "93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf",
+    "path": "skills/dependabot",
+    "skillSha256": "82ED5DE6CF667E52A33994B4612E288A633DBEBED3C3E11EC8760377457D0E95"
+  }
+]

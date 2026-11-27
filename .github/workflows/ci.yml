@@ -1,16 +1,10 @@
 name: Web CI
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - edited
-      - ready_for_review
-  workflow_dispatch: null
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
@@ -32,20 +26,14 @@ jobs:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
           PR_BASE: ${{ github.event.pull_request.base.sha }}
           PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
-        run: >
-          details=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq
-          '[.head.sha, .base.sha, .base.ref, .changed_files] | @tsv')
-
+        run: |
+          details=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '[.head.sha, .base.sha, .base.ref, .changed_files] | @tsv')
           IFS=$'\t' read -r head base base_ref file_count <<< "$details"
-
-          if [[ "$head" != "$PR_HEAD" || "$base" != "$PR_BASE" || "$base_ref" !=
-          "$PR_BASE_REF" || ! "$file_count" =~ ^[0-9]+$ ]]; then
+          if [[ "$head" != "$PR_HEAD" || "$base" != "$PR_BASE" || "$base_ref" != "$PR_BASE_REF" || ! "$file_count" =~ ^[0-9]+$ ]]; then
             echo '::error::Could not verify the changed-file count for this pull request revision.'
             exit 1
           fi
-
           echo "Files changed: $file_count"
-
           if (( file_count > 100 )); then
             echo '::error::This pull request exceeds the 100-file maximum. Split the change into smaller PRs.'
             exit 1
@@ -65,7 +53,7 @@ jobs:
           persist-credentials: false
       - uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122
         with:
-          php-version: "8.4"
+          php-version: '8.4'
           extensions: dom, fileinfo, gd, intl, mbstring, pdo_mysql, zip
           tools: composer:v2
           coverage: none
@@ -74,11 +62,12 @@ jobs:
       - run: composer audit
       - uses: actions/setup-node@66f83c8206e0997178c8fd7bf1da9efccf5dd388
         with:
-          node-version: "24"
+          node-version: '24'
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm audit
       - run: npm run typecheck
+      - run: npm run check:guidance
       - run: node --test scripts/check-deployed-release.test.mjs
   tests:
     runs-on: ubuntu-latest
@@ -86,12 +75,10 @@ jobs:
       mariadb:
         image: mariadb:10.11
         env:
-          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "1"
-          MARIADB_ROOT_HOST: "%"
-        ports:
-          - 3306:3306
-        options: --health-cmd="healthcheck.sh --connect --innodb_initialized"
-          --health-interval=5s --health-timeout=5s --health-retries=20
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+          MARIADB_ROOT_HOST: '%'
+        ports: ['3306:3306']
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=5s --health-timeout=5s --health-retries=20
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
@@ -99,12 +86,12 @@ jobs:
           persist-credentials: false
       - uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122
         with:
-          php-version: "8.4"
+          php-version: '8.4'
           extensions: dom, fileinfo, gd, intl, mbstring, pdo_mysql, zip
           coverage: xdebug
       - uses: actions/setup-node@66f83c8206e0997178c8fd7bf1da9efccf5dd388
         with:
-          node-version: "24"
+          node-version: '24'
           cache: npm
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci --ignore-scripts --no-audit --no-fund
@@ -121,12 +108,10 @@ jobs:
       mariadb:
         image: mariadb:10.11
         env:
-          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "1"
-          MARIADB_ROOT_HOST: "%"
-        ports:
-          - 3306:3306
-        options: --health-cmd="healthcheck.sh --connect --innodb_initialized"
-          --health-interval=5s --health-timeout=5s --health-retries=20
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+          MARIADB_ROOT_HOST: '%'
+        ports: ['3306:3306']
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=5s --health-timeout=5s --health-retries=20
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
@@ -134,12 +119,12 @@ jobs:
           persist-credentials: false
       - uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122
         with:
-          php-version: "8.4"
+          php-version: '8.4'
           extensions: dom, fileinfo, gd, intl, mbstring, pdo_mysql
           coverage: none
       - uses: actions/setup-node@66f83c8206e0997178c8fd7bf1da9efccf5dd388
         with:
-          node-version: "24"
+          node-version: '24'
           cache: npm
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci --ignore-scripts --no-audit --no-fund
@@ -158,12 +143,10 @@ jobs:
       mariadb:
         image: mariadb:10.11
         env:
-          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "1"
-          MARIADB_ROOT_HOST: "%"
-        ports:
-          - 3306:3306
-        options: --health-cmd="healthcheck.sh --connect --innodb_initialized"
-          --health-interval=5s --health-timeout=5s --health-retries=20
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+          MARIADB_ROOT_HOST: '%'
+        ports: ['3306:3306']
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=5s --health-timeout=5s --health-retries=20
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
@@ -171,18 +154,13 @@ jobs:
           persist-credentials: false
       - uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122
         with:
-          php-version: "8.4"
+          php-version: '8.4'
           extensions: dom, fileinfo, gd, intl, mbstring, pdo_mysql, zip
           coverage: none
       - run: php scripts/package-release.php
   check:
     if: always()
-    needs:
-      - pr-files
-      - quality
-      - tests
-      - browser
-      - release
+    needs: [pr-files, quality, tests, browser, release]
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -190,7 +168,7 @@ jobs:
         env:
           RESULTS: ${{ toJSON(needs) }}
           EVENT: ${{ github.event_name }}
-        run: >
+        run: |
           echo "$RESULTS" | jq -e --arg event "$EVENT" '
             all(to_entries[]; if .key == "pr-files" and $event != "pull_request"
               then .value.result == "skipped" else .value.result == "success" end)'

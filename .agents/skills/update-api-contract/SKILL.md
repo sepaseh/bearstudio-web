@@ -1,0 +1,12 @@
+---
+name: update-api-contract
+description: Change or review the Bear Studio HTTP contract when a route, request, response, error, authentication requirement, or the development Swagger view changes. Coordinates OpenAPI 3.0, Laravel handlers, and compatibility with the independent management panel.
+---
+
+# Update the Bear Studio API contract
+
+1. Identify the affected host, method, and operation in [routes](../../../routes/web.php) and [OpenAPI](../../../docs/openapi.json). Trace the handler and any shared validation, authorization, or error mapping. Apply the [wire rules](../../rules/api-contract.md) to the changed behavior.
+2. Compare the proposed change with the previous public shape. Check the management panel's actual usage when compatibility is uncertain and the consumer checkout is available. Record any breaking change or unknown consumer assumption. Keep panel implementation and release actions in the panel's own scope.
+3. Change the implementation, affected OpenAPI 3.0 operations, schemas or examples, and behavior tests together. Check the affected operation against the route, follow changed references, and search for stale names. Preserve OpenAPI 3.0 syntax and use synthetic examples based on actual responses. The single JSON contract feeds the development Swagger UI and can be imported into compatible tools.
+4. Run `composer test:contract` as described in the [test guide](../../../docs/testing.md). The [contract suite](../../../tests/Contract/OpenApiTest.php) checks registered hosts, methods and paths independently of response validation. Extend the real-response samples and feature tests for the changed operation. Select success, validation and permission cases as applicable. Include status and headers and check stored state when a rejected write must leave it intact. Report which response behaviors were sampled.
+5. If documentation delivery changes, run the [Swagger feature test](../../../tests/Feature/ApiDocumentationTest.php) with the locked npm development assets installed. Verify that the UI stays local-only on the admin host and that all levels of development server overrides preserve the public and admin split. The admin destination is relative to the UI's origin for session and CSRF, while the public destination uses the configured development `APP_URL`. Keep the published server entries in the canonical contract. When changing browser request handling, exercise the real cookie-session and CSRF flow on the local admin host.

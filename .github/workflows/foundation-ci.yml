@@ -1,0 +1,118 @@
+name: Web Foundation CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  changed-files:
+    name: Foundation PR size
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Check the pull request file count
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_ACTION: ${{ github.event.action }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          details=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '[.head.sha, .base.sha, .base.ref, .changed_files] | @tsv')
+          IFS=$'\t' read -r head base base_ref file_count <<< "$details"
+          if [[ "$head" != "$PR_HEAD" || "$base" != "$PR_BASE" || "$base_ref" != "$PR_BASE_REF" || ! "$file_count" =~ ^[0-9]+$ ]]; then
+            echo '::error::Could not verify the changed-file count for this pull request revision.'
+            exit 1
+          fi
+          echo "Files changed: $file_count"
+          if (( file_count > 100 )); then
+            echo '::error::This pull request exceeds the 100-file maximum. Split the change into smaller PRs.'
+            exit 1
+          elif (( file_count > 80 )); then
+            if [[ "$PR_ACTION" == opened ]]; then
+              echo '::error::Open new pull requests with at most 80 changed files. Reserve the remaining 20 for review fixes.'
+              exit 1
+            fi
+            echo '::warning::This pull request uses the file reserve for review fixes. Keep unrelated changes in a separate pull request.'
+          fi
+
+  source:
+    name: Foundation source checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+        with:
+          persist-credentials: false
+      - name: Lint the foundation workflow
+        shell: bash
+        run: |
+          tools_dir=$(mktemp -d)
+          trap 'rm -f "$tools_dir/actionlint.tar.gz" "$tools_dir/actionlint"; rmdir "$tools_dir"' EXIT
+          archive="$tools_dir/actionlint.tar.gz"
+          curl --fail --silent --show-error --location --retry 2 --output "$archive" \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+          printf '%s  %s\n' '8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8' "$archive" | sha256sum --check --status
+          tar -xzf "$archive" -C "$tools_dir" actionlint
+          "$tools_dir/actionlint" -color .github/workflows/foundation-ci.yml
+      - name: Check the published source phase
+        id: phase
+        shell: bash
+        run: |
+          test -s README.md
+          runtime_files=(artisan composer.json composer.lock docs/openapi.json)
+          present=0
+          for file in "${runtime_files[@]}"; do
+            if [[ -e "$file" || -L "$file" ]]; then
+              test -f "$file" && test -s "$file" && test ! -L "$file" || {
+                echo "::error::Expected a nonempty runtime file at $file."
+                exit 1
+              }
+              present=$((present + 1))
+            fi
+          done
+          if (( present == 0 )); then
+            echo 'runtime=false' >> "$GITHUB_OUTPUT"
+            echo 'Verified the repository foundation.'
+          elif (( present == ${#runtime_files[@]} )); then
+            echo 'runtime=true' >> "$GITHUB_OUTPUT"
+          else
+            echo '::error::Publish artisan, the Composer manifest and lockfile, and the OpenAPI contract together.'
+            exit 1
+          fi
+      - uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122
+        if: steps.phase.outputs.runtime == 'true'
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+      - name: Validate Composer and audit locked dependencies
+        if: steps.phase.outputs.runtime == 'true'
+        run: |
+          composer validate --strict --no-interaction --no-plugins
+          composer audit --locked --no-interaction --no-plugins
+      - name: Check PHP syntax and read the OpenAPI contract
+        if: steps.phase.outputs.runtime == 'true'
+        shell: bash
+        run: |
+          git ls-files -z -- '*.php' artisan | while IFS= read -r -d '' file; do
+            php -l "./$file"
+          done
+          php <<'PHP'
+          <?php
+          $contract = json_decode(file_get_contents("docs/openapi.json"), false, 512, JSON_THROW_ON_ERROR);
+          if (!is_string($contract->openapi ?? null) || !preg_match("/^3\\.[0-9]+\\.[0-9]+$/D", $contract->openapi)
+              || !is_object($contract->paths ?? null) || get_object_vars($contract->paths) === []) {
+              fwrite(STDERR, "Expected an OpenAPI 3 contract with at least one path.\n");
+              exit(1);
+          }
+          PHP

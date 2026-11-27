@@ -1,0 +1,45 @@
+# Test suite performance
+
+These settings apply to the project and CI, not to individual tests. Read `rules/isolation.md` for choices within a test.
+
+Fetch the PHPUnit 13.4.8 documentation at `https://phpunit.de/documentation.html` for PHPUnit options that make test runs faster.
+Verify each flag in the documentation before adding it to CI.
+
+Measure before changing a setting. Find the slow test first, and apply a project-wide setting only after identifying the costly work.
+
+## Test environment
+
+- Follow the [test guide's isolation configuration](../../../../docs/testing.md#isolation-and-fixtures) for environment and fixture settings. Diagnose the measured cost before changing test-wide configuration.
+- Disable Xdebug. Unless the run needs coverage, disable pcov too.
+- Disable packages that perform work on every request in the test environment. Examples are Pulse, Telescope, and Nightwatch.
+- Preserve environment and routing setup when tests need different hosts or configuration. Cache config or routes only when those tests still exercise the intended settings.
+
+## Global fakes
+
+Consider the following helpers when the measured cost comes from an external dependency. Scope them so the tests still exercise the real behavior under review:
+
+- `Http::preventStrayRequests()`, because one request that reaches the network can slow the suite. It catches requests that go through Laravel's HTTP client. Check direct Guzzle and cURL usage separately.
+- `Sleep::fake(syncWithCarbon: true)`, so a retry and a backoff do not sleep.
+- `Exceptions::fake()`, so the suite does not report an exception to an external service.
+
+## How to run the suite in parallel
+
+Use the existing Composer test commands. If a parallel runner is proposed, first verify that it preserves the MariaDB, filesystem and process isolation of this checkout.
+
+A parallel run gives each process a separate database. Each test must meet the conditions below. A test that fails only in parallel breaks one of them.
+
+- The test creates each record that it reads. It does not read a record that another test creates.
+- The test does not depend on the order of the run.
+- The test does not share a file, a cache key, or a queue with another test. Give each process a separate name for such a resource.
+
+## How to find a slow test
+
+Measure a focused run with `composer test -- --filter TestName`. Compare the actual slow cases before tuning the full suite.
+
+If the cause of a slow test is unclear, add an event listener or temporary log entry to identify the work the test does.
+
+## Common errors
+
+- The run loads Xdebug for a test that does not need it.
+- Test bootstrap fails to apply the existing disposable environment settings.
+- The code under test calls the real `sleep()`, and `Sleep::fake()` then does not help.

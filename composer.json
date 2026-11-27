@@ -1,0 +1,65 @@
+{
+  "name": "bear-studio/linux-pilot",
+  "description": "Bear Studio's Laravel pilot for Linux shared hosting.",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "ext-dom": "*",
+    "ext-fileinfo": "*",
+    "ext-gd": "*",
+    "ext-mbstring": "*",
+    "ext-pdo_mysql": "*",
+    "laravel/framework": "^13.0",
+    "php": "^8.4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true,
+    "platform": {
+      "php": "8.4.1"
+    }
+  },
+  "prefer-stable": true,
+  "require-dev": {
+    "larastan/larastan": "^3.0",
+    "laravel/pint": "^1.0",
+    "league/openapi-psr7-validator": "^0.24",
+    "mockery/mockery": "^1.6",
+    "nyholm/psr7": "^1.8",
+    "phpunit/phpunit": "^13.0"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "@php vendor/phpunit/phpunit/phpunit",
+    "test:unit": "@test --testsuite Unit",
+    "test:feature": "@test --testsuite Feature",
+    "test:contract": "@test --testsuite Contract",
+    "test:coverage": [
+      "@test --coverage-clover coverage/clover.xml --coverage-html coverage/html --log-junit coverage/junit.xml",
+      "@check:coverage"
+    ],
+    "format:check": "@php vendor/laravel/pint/builds/pint --test",
+    "format": "@php vendor/laravel/pint/builds/pint",
+    "analyse": "@php vendor/phpstan/phpstan/phpstan analyse --memory-limit=768M",
+    "quality": [
+      "@composer validate --strict",
+      "@format:check",
+      "@analyse"
+    ],
+    "check": [
+      "@quality",
+      "@test",
+      "@composer audit"
+    ],
+    "check:coverage": "@php scripts/check-coverage.php"
+  }
+}

@@ -1,0 +1,14 @@
+/.env
+/.build/
+/.artifacts/
+/vendor/
+/public/admin/
+/storage/db/*
+/storage/logs/*
+/storage/app/private/*
+/storage/framework/*
+/bootstrap/cache/*.php
+/node_modules/
+/coverage/
+/playwright-report/
+/test-results/

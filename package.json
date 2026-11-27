@@ -1,0 +1,19 @@
+{
+  "name": "bearstudio-web-verification",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "test:browser": "playwright test",
+    "check:guidance": "node scripts/check-guidance.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "24.19.4",
+    "swagger-ui-dist": "5.36.0",
+    "typescript": "7.0.2"
+  }
+}

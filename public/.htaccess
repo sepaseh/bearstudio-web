@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^\.well-known/acme-challenge(?:/|$) - [END]
+    RewriteRule ^admin(?:/|$) - [R=404,END,NC]
+    RewriteRule ^api/v1(?:/|$) index.php [END]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [END]
+</IfModule>
